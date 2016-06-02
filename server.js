@@ -1,9 +1,10 @@
 //postgis-preview
 //A super simple node app + leaflet frontend for quickly viewing PostGIS query results
 
+var Promise = require('bluebird');
 //dependencies
 var express = require('express'),
-    pgp = require('pg-promise')(),
+    pgp = require('pg-promise')({promiseLib: Promise}),
     dbgeo = require('dbgeo'),
     jsonexport = require('jsonexport');
 
@@ -59,9 +60,9 @@ function dbGeoParse(data, format) {
     if(!data[0].geom) {
        data.forEach(function(row) {
         row.geom='010100000000000000000000000000000000000000';
-       }) 
+       })
     }
-    
+
 
 
     return new Promise(function (resolve, reject) {
@@ -81,12 +82,12 @@ function dbGeoParse(data, format) {
 }
 
 
-function jsonExport(data) {  
-    //remove geom     
-    data.forEach(function (row) {     
-        delete row.geom;      
+function jsonExport(data) {
+    //remove geom
+    data.forEach(function (row) {
+        delete row.geom;
     });
-    
+
     return new Promise(function (resolve, reject) {
         jsonexport(data, function (err, csv) {
             if (err) {
